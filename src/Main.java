@@ -8,23 +8,20 @@ public class Main {
     public static void main(String[] args) {
         field = getEmptyField();
         printField();
+        Scanner scanner = new Scanner(System.in);
 
         Ships[] values = Ships.values();
 
         for (Ships ship : values) {
             System.out.printf("\nEnter the coordinates of the %s (%d cells):\n%n", ship.getName(), ship.getSize());
 
-            boolean isCoordinateValid;
+            boolean isShipCoordinatesValid;
             int row1;
             int column1;
             int row2;
             int column2;
-            do {
-                Scanner scanner = new Scanner(System.in);
 
-                if (!scanner.hasNext()) {
-                    System.out.println("\n> ");
-                }
+            do {
                 String coordinate1 = scanner.next();
                 String coordinate2 = scanner.next();
 
@@ -33,12 +30,31 @@ public class Main {
                 row2 = coordinate2.toCharArray()[0] - 64;
                 column2 = Integer.parseInt(coordinate2.substring(1));
 
-                isCoordinateValid = validateCoordinates(row1, column1, row2, column2, ship);
+                isShipCoordinatesValid = validateCoordinates(row1, column1, row2, column2, ship);
 
-            } while (!isCoordinateValid);
+            } while (!isShipCoordinatesValid);
+
             setShip(row1, column1, row2, column2);
             printField();
         }
+        System.out.println("\nThe game starts!\n");
+        printField();
+        System.out.println("\nTake a shot!\n");
+        boolean isShotCoordinateValid;
+        int shotRow;
+        int shotColumn;
+
+        do {
+            String shootCoordinate = scanner.next();
+
+            shotRow = shootCoordinate.toCharArray()[0] - 64;
+            shotColumn = Integer.parseInt(shootCoordinate.substring(1));
+
+            isShotCoordinateValid = validateCoordinates(shotRow, shotColumn);
+
+        } while (!isShotCoordinateValid);
+        hitOrMiss(shotRow, shotColumn);
+        printField();
     }
 
     private static String[][] getEmptyField() {
@@ -70,19 +86,19 @@ public class Main {
         //проверка верности размера корабля
         if (difOfRow == 0) {
             if (difOfColumn != ship.getSize() - 1) {
-                System.out.println("\nError! Wrong length of the " + ship.getName() + "! Try again:");
+                System.out.println("\nError! Wrong length of the " + ship.getName() + "! Try again:\n");
                 return false;
             }
         } else if (difOfColumn == 0) {
             if (difOfRow != ship.getSize() - 1) {
-                System.out.println("\nError! Wrong length of the " + ship.getName() + "! Try again:");
+                System.out.println("\nError! Wrong length of the " + ship.getName() + "! Try again:\n");
                 return false;
             }
         }
 
         //проверка что не диагонально
         if (row1 != row2 && column1 != column2) {
-            System.out.println("\nError! Wrong ship location! Try again:");
+            System.out.println("\nError! Wrong ship location! Try again:\n");
             return false;
         }
 
@@ -100,7 +116,7 @@ public class Main {
         for (int i = firstCoordinateRow; i <= secondCoordinateRow; i++) {
             for (int j = firstCoordinateColumn; j <= secondCoordinateColumn; j++) {
                 if (i != SIZE_OF_FIELD && j != SIZE_OF_FIELD && field[i][j].equals("O ")) {
-                    System.out.println("\nError! You placed it too close to another one. Try again:");
+                    System.out.println("\nError! You placed it too close to another one. Try again:\n");
                     return false;
                 }
             }
@@ -120,6 +136,7 @@ public class Main {
                 field[i][j] = "O ";
             }
         }
+        System.out.println();
     }
 
     private static void printField() {
@@ -128,6 +145,26 @@ public class Main {
                 System.out.print(field[i][j]);
             }
             System.out.println();
+        }
+    }
+
+    private static boolean validateCoordinates(int shootRow, int shootColumn) {
+        //проверка что не выходят за рамки поля
+        if (!(shootRow >= 1 && shootRow <= 10 && shootColumn >= 1 && shootColumn <= 10)) {
+            System.out.println("\nError! You entered the wrong coordinates! Try again:\n");
+            return false;
+        }
+        return true;
+    }
+
+    private static void hitOrMiss(int shootRow, int shootColumn) {
+
+        if (field[shootRow][shootColumn].equals("O ")) {
+            field[shootRow][shootColumn] = "X ";
+            System.out.println("\nYou hit a ship!");
+        } else {
+            field[shootRow][shootColumn] = "M ";
+            System.out.println("\nYou missed!");
         }
     }
 }
