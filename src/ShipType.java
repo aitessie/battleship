@@ -1,4 +1,4 @@
-public enum Ships {
+public enum ShipType {
     AIRCRAFT_CARRIER(5, "Aircraft Carrier"),
     BATTLESHIP(4, "Battleship"),
     SUBMARINE(3, "Submarine"),
@@ -9,7 +9,7 @@ public enum Ships {
     private final String name;
 
 
-    Ships(int size, String name) {
+    ShipType(int size, String name) {
         this.size = size;
         this.name = name;
     }
